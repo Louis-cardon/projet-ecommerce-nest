@@ -42,4 +42,10 @@ export class UsersService {
   async remove(id: string): Promise<User> {
     return this.prisma.user.delete({ where: { id: Number(id) } });
   }
+
+  async findOneByUsername(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
 }
