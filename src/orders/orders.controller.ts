@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from '@prisma/client';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Role } from 'src/auth/roles.enum';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('orders')
+@UseGuards(RolesGuard)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
@@ -28,6 +32,7 @@ export class OrdersController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
     await this.ordersService.remove(id);

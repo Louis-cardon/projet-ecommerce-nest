@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Product } from '@prisma/client';
+import { Role } from 'src/auth/roles.enum';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('products')
 export class ProductsController {
@@ -28,6 +30,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
     await this.productsService.remove(id);

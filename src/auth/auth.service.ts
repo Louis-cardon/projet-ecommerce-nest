@@ -25,4 +25,20 @@ export class AuthService {
     return jwt.sign(payload, this.JWT_SECRET_KEY, { expiresIn: '1h' });
   }
 
+  async signInAdmin(email: string, password: string): Promise<string> {
+
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = { username: user.email, sub: user.id, roles:[ 'admin']};
+    return jwt.sign(payload, this.JWT_SECRET_KEY, { expiresIn: '1h' });
+  }
+
 }

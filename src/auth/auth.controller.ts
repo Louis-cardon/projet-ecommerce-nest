@@ -7,9 +7,13 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  async signIn(@Body() loginDto: any) { // Remplacez 'any' par un DTO approprié
+  async signIn(@Body() loginDto: any) { 
     return this.authService.signIn(loginDto.email,loginDto.password);
   }
 
-  // Vous pouvez ajouter d'autres méthodes comme signup, logout, etc.
+  @Post('signinadmin')
+  @HttpCode(HttpStatus.OK)
+  async signInAdmin(@Body() loginDto: any) { 
+    return this.authService.signInAdmin(loginDto.email,loginDto.password);
+  }
 }
