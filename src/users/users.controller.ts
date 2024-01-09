@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { User } from '@prisma/client';
 import { Role } from 'src/auth/roles.enum';
 import { Roles } from 'src/auth/roles.decorator';
+import { CreateUserDto, UpdateUserDto } from './users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -20,16 +21,16 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() userData: User): Promise<User> {
-    return await this.usersService.create(userData);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return await this.usersService.create(createUserDto);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() userData: User): Promise<User> {
-    return await this.usersService.update(id, userData);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+    return await this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id')  
+  @Delete(':id')
   @Roles(Role.Admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {

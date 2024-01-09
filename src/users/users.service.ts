@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
@@ -21,21 +21,28 @@ export class UsersService {
     return user;
   }
 
-  async create(userData: User): Promise<User> {
+  async create(userData: Prisma.UserCreateInput): Promise<User> {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const newUser = { ...userData, password: hashedPassword };
-    return this.prisma.user.create({ data: newUser });
+    return this.prisma.user.create({
+      data: {
+        ...userData,
+        password: hashedPassword,
+      },
+    });
   }
 
-  async update(id: string, userData: User): Promise<User> {
-    let updatedUser = userData;
+  async update(id: string, userData: Prisma.UserUpdateInput): Promise<User> {
+    const updateData: Prisma.UserUpdateInput = { ...userData };
+  
     if (userData.password) {
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      updatedUser = { ...userData, password: hashedPassword };
+      updateData.password = await bcrypt.hash(userData.password, 10);
+    } else {
+      delete updateData.password; 
     }
+  
     return this.prisma.user.update({
       where: { id: Number(id) },
-      data: updatedUser,
+      data: updateData,
     });
   }
 
