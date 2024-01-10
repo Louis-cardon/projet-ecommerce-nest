@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -47,7 +47,19 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<User> {
-    return this.prisma.user.delete({ where: { id: Number(id) } });
+    const orders = await this.prisma.order.findMany({
+      where: { userId: Number(id) },
+    });
+
+    if (orders.length > 0) {
+      throw new ConflictException(`Cannot delete user with ID ${id} as it is referenced in other records.`);
+    }
+
+    try {
+      return await this.prisma.user.delete({ where: { id: Number(id) } });
+    } catch (error) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
   }
 
   async findOneByUsername(email: string) {
