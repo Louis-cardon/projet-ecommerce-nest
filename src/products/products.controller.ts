@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Product } from '@prisma/client';
 import { Role } from 'src/auth/roles.enum';
 import { Roles } from 'src/auth/roles.decorator';
+import { Product } from '@prisma/client';
+import { CreateProductDto, UpdateProductDto } from './products.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -20,13 +21,13 @@ export class ProductsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() productData: Product): Promise<Product> {
-    return await this.productsService.create(productData);
+  async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+    return await this.productsService.create(createProductDto);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() productData: Product): Promise<Product> {
-    return await this.productsService.update(id, productData);
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto): Promise<Product> {
+    return await this.productsService.update(id, updateProductDto);
   }
 
   @Delete(':id')

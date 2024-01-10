@@ -4,6 +4,7 @@ import { Order } from '@prisma/client';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Role } from 'src/auth/roles.enum';
 import { Roles } from 'src/auth/roles.decorator';
+import { CreateOrderDto, UpdateOrderDto } from './orders.dto';
 
 @Controller('orders')
 @UseGuards(RolesGuard)
@@ -22,13 +23,13 @@ export class OrdersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() orderData: Order): Promise<Order> {
-    return await this.ordersService.create(orderData);
+  async create(@Body() createOrderDto: CreateOrderDto): Promise<Order> {
+    return await this.ordersService.create(createOrderDto);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() orderData: Order): Promise<Order> {
-    return await this.ordersService.update(id, orderData);
+  async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<Order> {
+    return await this.ordersService.update(id, updateOrderDto);
   }
 
   @Delete(':id')
